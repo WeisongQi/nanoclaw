@@ -5,7 +5,7 @@ description: Add Telegram as a channel. Can replace WhatsApp entirely or run alo
 
 # Add Telegram Channel
 
-This skill adds Telegram support to NanoClaw using the skills engine for deterministic code changes, then walks through interactive setup.
+This skill adds Telegram support to NanoClaw using the skills engine for deterministic code changes, then walks through interactive setup. Powered by OpenCode SDK.
 
 ## Phase 1: Pre-flight
 
@@ -42,7 +42,7 @@ Or call `initSkillsSystem()` from `skills-engine/migrate.ts`.
 ### Apply the skill
 
 ```bash
-npx tsx scripts/apply-skill.ts .claude/skills/add-telegram
+npx tsx scripts/apply-skill.ts container/skills/add-telegram
 ```
 
 This deterministically:
@@ -55,7 +55,7 @@ This deterministically:
 - Updates `.env.example` with `TELEGRAM_BOT_TOKEN` and `TELEGRAM_ONLY`
 - Records the application in `.nanoclaw/state.yaml`
 
-If the apply reports merge conflicts, read the intent files:
+If the apply reports merge conflicts, read the intent files in the skill directory:
 - `modify/src/index.ts.intent.md` — what changed and invariants for index.ts
 - `modify/src/config.ts.intent.md` — what changed for config.ts
 
@@ -174,7 +174,7 @@ Tell the user:
 
 > Send a message to your registered Telegram chat:
 > - For main chat: Any message works
-> - For non-main: `@Andy hello` or @mention the bot
+> - For non-main: @mention the bot
 >
 > The bot should respond within a few seconds.
 
@@ -225,7 +225,7 @@ launchctl load ~/Library/LaunchAgents/com.nanoclaw.plist
 
 After completing the Telegram setup, use `AskUserQuestion`:
 
-AskUserQuestion: Would you like to add Agent Swarm support? Without it, Agent Teams still work — they just operate behind the scenes. With Swarm support, each subagent appears as a different bot in the Telegram group so you can see who's saying what and have interactive team sessions.
+AskUserQuestion: Would you like to add Agent Swarm support? Without it, Agent Teams still work — they just operate behind the scenes. With Swarm support, each subagent appears as a different bot in the Telegram group so you can see who's saying what and have interactive team sessions. (Note: Requires separate bot tokens for each subagent).
 
 If they say yes, invoke the `/add-telegram-swarm` skill.
 

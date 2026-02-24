@@ -67,3 +67,10 @@ export const TRIGGER_PATTERN = new RegExp(
 // Uses system timezone by default
 export const TIMEZONE =
   process.env.TZ || Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+// OpenCode model configuration
+export const OPENCODE_MODEL =
+  process.env.OPENCODE_MODEL || 'nvidia/moonshotai/kimi-k2.5';
+export const NVIDIA_API_BASE_URL =
+  process.env.NVIDIA_API_BASE_URL || 'https://integrate.api.nvidia.com/v1';
+

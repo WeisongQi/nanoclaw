@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  My personal Claude assistant that runs securely in containers. Lightweight and built to be understood and customized for your own needs.
+  My personal AI assistant that runs securely in containers. Lightweight and built to be understood and customized for your own needs. Powered by OpenCode SDK.
 </p>
 
 <p align="center">
@@ -13,7 +13,7 @@
   <a href="repo-tokens"><img src="repo-tokens/badge.svg" alt="34.9k tokens, 17% of context window" valign="middle"></a>
 </p>
 
-**New:** First AI assistant to support [Agent Swarms](https://code.claude.com/docs/en/agent-teams). Spin up teams of agents that collaborate in your chat.
+**New:** Supports flexible model choice via OpenCode SDK. Default: Kimi K2.5 via Nvidia cloud API.
 
 ## Why I Built This
 
@@ -26,33 +26,38 @@ NanoClaw gives you the same core functionality in a codebase you can understand 
 ```bash
 git clone https://github.com/qwibitai/nanoclaw.git
 cd nanoclaw
-claude
+npm install
 ```
 
-Then run `/setup`. Claude Code handles everything: dependencies, authentication, container setup, service configuration.
+Copy `.env.example` to `.env`, add your `NVIDIA_API_KEY`, then build and run:
+
+```bash
+cp .env.example .env
+# Edit .env to add NVIDIA_API_KEY
+./container/build.sh
+npm run dev
+```
 
 ## Philosophy
 
-**Small enough to understand.** One process, a few source files. No microservices, no message queues, no abstraction layers. Have Claude Code walk you through it.
+**Small enough to understand.** One process, a few source files. No microservices, no message queues, no abstraction layers.
 
 **Secure by isolation.** Agents run in Linux containers (Apple Container on macOS, or Docker). They can only see what's explicitly mounted. Bash access is safe because commands run inside the container, not on your host.
 
-**Built for one user.** This isn't a framework. It's working software that fits my exact needs. You fork it and have Claude Code make it match your exact needs.
+**Built for one user.** This isn't a framework. It's working software that fits my exact needs. You fork it and make it match your exact needs.
 
 **Customization = code changes.** No configuration sprawl. Want different behavior? Modify the code. The codebase is small enough that this is safe.
 
-**AI-native.** No installation wizard; Claude Code guides setup. No monitoring dashboard; ask Claude what's happening. No debugging tools; describe the problem, Claude fixes it.
+**AI-native.** Built around OpenCode SDK with flexible model choice. Default model: Kimi K2.5 via Nvidia API.
 
-**Skills over features.** Contributors shouldn't add features (e.g. support for Telegram) to the codebase. Instead, they contribute [claude code skills](https://code.claude.com/docs/en/skills) like `/add-telegram` that transform your fork. You end up with clean code that does exactly what you need.
-
-**Best harness, best model.** This runs on Claude Agent SDK, which means you're running Claude Code directly. The harness matters. A bad harness makes even smart models seem dumb, a good harness gives them superpowers. Claude Code is (IMO) the best harness available.
+**Best harness, flexible models.** This runs on OpenCode SDK, which means you get access to multiple AI providers and models. Switch between Nvidia, OpenAI, Anthropic, and more by changing a single config line.
 
 ## What It Supports
 
-- **WhatsApp I/O** - Message Claude from your phone
-- **Isolated group context** - Each group has its own `CLAUDE.md` memory, isolated filesystem, and runs in its own container sandbox with only that filesystem mounted
+- **WhatsApp I/O** - Message your AI assistant from your phone
+- **Isolated group context** - Each group has its own memory, isolated filesystem, and runs in its own container sandbox with only that filesystem mounted
 - **Main channel** - Your private channel (self-chat) for admin control; every other group is completely isolated
-- **Scheduled tasks** - Recurring jobs that run Claude and can message you back
+- **Scheduled tasks** - Recurring jobs that run the AI and can message you back
 - **Web access** - Search and fetch content
 - **Container isolation** - Agents sandboxed in Apple Container (macOS) or Docker (macOS/Linux)
 - **Agent Swarms** - Spin up teams of specialized agents that collaborate on complex tasks (first personal AI assistant to support this)
@@ -77,7 +82,7 @@ From the main channel (your self-chat), you can manage groups and tasks:
 
 ## Customizing
 
-There are no configuration files to learn. Just tell Claude Code what you want:
+There are no configuration files to learn. Just tell the assistant what you want:
 
 - "Change the trigger word to @Bob"
 - "Remember in the future to make responses shorter and more direct"
@@ -86,23 +91,23 @@ There are no configuration files to learn. Just tell Claude Code what you want:
 
 Or run `/customize` for guided changes.
 
-The codebase is small enough that Claude can safely modify it.
+The codebase is small enough that it can be safely modified.
 
 ## Updating
 
 Pull the latest NanoClaw changes into your fork:
 
 ```bash
-claude
+npm run dev
 ```
 
-Then run `/update`. Claude Code fetches upstream, previews changes, merges with your customizations, runs migrations, and verifies the result.
+The update process fetches upstream, previews changes, and merges with your customizations.
 
 ## Contributing
 
 **Don't add features. Add skills.**
 
-If you want to add Telegram support, don't create a PR that adds Telegram alongside WhatsApp. Instead, contribute a skill file (`.claude/skills/add-telegram/SKILL.md`) that teaches Claude Code how to transform a NanoClaw installation to use Telegram.
+If you want to add Telegram support, don't create a PR that adds Telegram alongside WhatsApp. Instead, contribute a skill file that teaches the system how to transform a NanoClaw installation to use Telegram.
 
 Users then run `/add-telegram` on their fork and get clean code that does exactly what they need, not a bloated system trying to support every use case.
 
@@ -117,19 +122,19 @@ Skills we'd like to see:
 - `/setup-windows` - Windows via WSL2 + Docker
 
 **Session Management**
-- `/add-clear` - Add a `/clear` command that compacts the conversation (summarizes context while preserving critical information in the same session). Requires figuring out how to trigger compaction programmatically via the Claude Agent SDK.
+- `/add-clear` - Add a `/clear` command that compacts the conversation (summarizes context while preserving critical information in the same session).
 
 ## Requirements
 
 - macOS or Linux
 - Node.js 20+
-- [Claude Code](https://claude.ai/download)
-- [Apple Container](https://github.com/apple/container) (macOS) or [Docker](https://docker.com/products/docker-desktop) (macOS/Linux)
+- [Docker](https://docker.com/products/docker-desktop) (macOS/Linux)
+- Nvidia API key (from https://build.nvidia.com)
 
 ## Architecture
 
 ```
-WhatsApp (baileys) --> SQLite --> Polling loop --> Container (Claude Agent SDK) --> Response
+WhatsApp (baileys) --> SQLite --> Polling loop --> Container (OpenCode SDK) --> Response
 ```
 
 Single Node.js process. Agents execute in isolated Linux containers with mounted directories. Per-group message queue with concurrency control. IPC via filesystem.
@@ -143,7 +148,7 @@ Key files:
 - `src/container-runner.ts` - Spawns streaming agent containers
 - `src/task-scheduler.ts` - Runs scheduled tasks
 - `src/db.ts` - SQLite operations (messages, groups, sessions, state)
-- `groups/*/CLAUDE.md` - Per-group memory
+- `groups/*/CLAUDE.md` - Per-group memory (legacy naming, still functional)
 
 ## FAQ
 
@@ -169,11 +174,11 @@ We don't want configuration sprawl. Every user should customize it to so that th
 
 **How do I debug issues?**
 
-Ask Claude Code. "Why isn't the scheduler running?" "What's in the recent logs?" "Why did this message not get a response?" That's the AI-native approach.
+Ask an AI assistant. "Why isn't the scheduler running?" "What's in the recent logs?" "Why did this message not get a response?"
 
 **Why isn't the setup working for me?**
 
-I don't know. Run `claude`, then run `/debug`. If claude finds an issue that is likely affecting other users, open a PR to modify the setup SKILL.md.
+I don't know. Check the logs in `data/logs/`. If you find an issue that is likely affecting other users, open a PR.
 
 **What changes will be accepted into the codebase?**
 

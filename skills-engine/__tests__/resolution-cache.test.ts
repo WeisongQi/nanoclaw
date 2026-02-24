@@ -93,19 +93,19 @@ describe('resolution-cache', () => {
     expect(result).toContain('alpha+beta');
   });
 
-  it('findResolutionDir finds shipped resolutions in .claude/resolutions', () => {
-    const shippedDir = path.join(tmpDir, '.claude', 'resolutions', 'alpha+beta');
+  it('findResolutionDir finds shipped resolutions in container/skills/resolutions', () => {
+    const shippedDir = path.join(tmpDir, 'container', 'skills', 'resolutions', 'alpha+beta');
     fs.mkdirSync(shippedDir, { recursive: true });
     fs.writeFileSync(path.join(shippedDir, 'meta.yaml'), 'skills: [alpha, beta]\n');
 
     const result = findResolutionDir(['alpha', 'beta'], tmpDir);
     expect(result).not.toBeNull();
-    expect(result).toContain('.claude/resolutions/alpha+beta');
+    expect(result).toContain('container/skills/resolutions/alpha+beta');
   });
 
   it('findResolutionDir prefers shipped over project-level', () => {
     // Create both shipped and project-level
-    const shippedDir = path.join(tmpDir, '.claude', 'resolutions', 'a+b');
+    const shippedDir = path.join(tmpDir, 'container', 'skills', 'resolutions', 'a+b');
     fs.mkdirSync(shippedDir, { recursive: true });
     fs.writeFileSync(path.join(shippedDir, 'meta.yaml'), 'skills: [a, b]\n');
 
@@ -117,7 +117,7 @@ describe('resolution-cache', () => {
     );
 
     const result = findResolutionDir(['a', 'b'], tmpDir);
-    expect(result).toContain('.claude/resolutions/a+b');
+    expect(result).toContain('container/skills/resolutions/a+b');
   });
 
   it('skills are sorted so order does not matter', () => {
@@ -148,7 +148,7 @@ describe('resolution-cache', () => {
 
     function setupResolutionDir(fileHashes: Record<string, any>) {
       // Create a shipped resolution directory
-      const resDir = path.join(tmpDir, '.claude', 'resolutions', 'alpha+beta');
+      const resDir = path.join(tmpDir, 'container', 'skills', 'resolutions', 'alpha+beta');
       fs.mkdirSync(path.join(resDir, 'src'), { recursive: true });
 
       // Write preimage, resolution, and hash sidecar

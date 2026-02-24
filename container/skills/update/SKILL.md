@@ -5,7 +5,7 @@ description: "Update NanoClaw from upstream. Fetches latest changes, merges with
 
 # Update NanoClaw
 
-Pull upstream changes and merge them with the user's installation, preserving skills and customizations. Scripts live in `.claude/skills/update/scripts/`.
+Pull upstream changes and merge them with the user's installation, preserving skills and customizations. Scripts live in `container/skills/update/scripts/`.
 
 **Principle:** Handle everything automatically. Only pause for user confirmation before applying changes, or when merge conflicts need human judgment.
 
@@ -38,7 +38,7 @@ git status --porcelain
 Run the fetch script:
 
 ```bash
-./.claude/skills/update/scripts/fetch-upstream.sh
+./container/skills/update/scripts/fetch-upstream.sh
 ```
 
 Parse the structured status block between `<<< STATUS` and `STATUS >>>` markers. Extract:
@@ -99,7 +99,7 @@ Parse the JSON output. The result has: `success`, `previousVersion`, `newVersion
 
 For each file in `mergeConflicts`:
 1. Read the file — it contains conflict markers (`<<<<<<<`, `=======`, `>>>>>>>`)
-2. Check if there's an intent file for this path in any applied skill (e.g., `.claude/skills/<skill>/modify/<path>.intent.md`)
+2. Check if there's an intent file for this path in any applied skill (e.g., `container/skills/<skill>/modify/<path>.intent.md`)
 3. Use the intent file and your understanding of the codebase to resolve the conflict
 4. Write the resolved file
 
